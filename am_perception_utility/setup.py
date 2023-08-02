@@ -1,10 +1,10 @@
 from setuptools import setup
 
-package_name = 'am_ros2_perception'
+package_name = 'am_perception_utility'
 
 setup(
     name=package_name,
-    version='0.0.0',
+    version='1.0.0',
     packages=[package_name],
     data_files=[
         ('share/ament_index/resource_index/packages',
