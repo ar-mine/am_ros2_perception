@@ -6,9 +6,9 @@ from geometry_msgs.msg import TransformStamped
 from cv_bridge import CvBridge, CvBridgeError
 from tf2_ros import TransformBroadcaster
 from rclpy.qos import qos_profile_sensor_data
-from franka_perception.DTOID.DTOIDModule import DTOIDModule
-from franka_perception.base.ImageNodeBase import ImageNodeBase
-# from franka_perception.utils.BoxDetector import BoxDetector
+
+from am_template_detection.DTOIDModule import DTOIDModule
+from am_perception_utility.ImageNodeBase import ImageNodeBase
 
 import time
 import cv2
