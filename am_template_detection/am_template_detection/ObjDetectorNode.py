@@ -22,7 +22,7 @@ class ObjDetectorNode(ImageNodeBase):
                   1 for detecting with object detection
                   2 for detecting box's lattice
         """
-        self.step = 0
+        self.step = 1
 
         self.rgb_img = None
         self.depth_img = None

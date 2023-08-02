@@ -9,7 +9,7 @@ import numpy
 import cv2
 from math import atan2, atan
 
-from franka_perception.DTOID.siamesenet import SiameseNetwork
+from am_template_detection.models.siamesenet import SiameseNetwork
 from torchvision import transforms
 import torch.nn.functional as F
 
@@ -25,10 +25,10 @@ class DTOIDModule:
         self.template_dir = os.path.join(model_directory, template_dir)
 
         # Load Network
-        network_module = SourceFileLoader(file_path, os.path.join(file_path, "network.py")).load_module()
+        network_module = SourceFileLoader(file_path, os.path.join(file_path, "models/network.py")).load_module()
         self.model = network_module.Network()
         self.model.eval()
-        checkpoint = torch.load(os.path.join(file_path, "mlcm.pth.tar"), map_location=lambda storage, loc: storage)
+        checkpoint = torch.load(os.path.join(file_path, "pretrained/mlcm.pth.tar"), map_location=lambda storage, loc: storage)
 
         self.model.load_state_dict(checkpoint["state_dict"])
         if self.backend == "cuda":
@@ -39,7 +39,7 @@ class DTOIDModule:
         self.sim_model = SiameseNetwork()
         self.sim_model.eval()
         self.sim_model = self.sim_model.cuda()
-        simnet_checkpoint = torch.load(os.path.join(file_path, "model_15.pth.tar"))
+        simnet_checkpoint = torch.load(os.path.join(file_path, "pretrained/model_15.pth.tar"))
         try:
             self.sim_model.module.load_state_dict(simnet_checkpoint, strict=True)
         except:

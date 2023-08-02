@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'template_detector = franka_template_detection.ObjDetectorNode:main',
+            'template_detector = am_template_detection.ObjDetectorNode:main',
         ],
     },
 )
