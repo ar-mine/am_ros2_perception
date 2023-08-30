@@ -1,0 +1,6 @@
+[submodule "am_OVD/am_OVD/modules/detectron2"]
+	path = am_OVD/am_OVD/modules/detectron2
+	url = git@github.com:facebookresearch/detectron2.git
+[submodule "am_OVD/am_OVD/modules/Detic"]
+	path = am_OVD/am_OVD/modules/Detic
+	url = https://github.com/facebookresearch/Detic.git
