@@ -20,6 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'ov_detector = am_OVD.OVD_Node:main',
         ],
     },
 )
