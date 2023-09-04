@@ -9,8 +9,8 @@ from .Detic.demo import VisualizationDemo, setup_cfg
 
 
 class DeticArgs:
-    def __init__(self):
-        self.confidence_threshold = 0.3
+    def __init__(self, custom_vocabulary=None, confidence_threshold=0.3):
+        self.confidence_threshold = confidence_threshold
         self.config_file = os.path.join(detic_path, 'configs/Detic_LCOCOI21k_CLIP_SwinB_896b32_4x_ft4x_max-size.yaml')
         self.cpu = False
         # self.input = ['desk.jpg']
@@ -19,14 +19,24 @@ class DeticArgs:
         # self.output = 'out2.jpg'
         self.pred_all_class = False
         self.video_input = None
-        self.vocabulary = 'lvis'
-        # self.custom_vocabulary = 'hat,paper'
+        if custom_vocabulary is not None:
+            self.vocabulary = 'custom'
+            self.custom_vocabulary = "" + custom_vocabulary[0]
+            if len(custom_vocabulary) > 1:
+                for v in custom_vocabulary[1:]:
+                    self.custom_vocabulary += ","
+                    self.custom_vocabulary += v
+            # self.custom_vocabulary = 'hat,paper'
+        else:
+            self.vocabulary = 'lvis'
         self.webcam = None
 
 
 class DeticModule:
-    def __init__(self):
-        args = DeticArgs()
+    def __init__(self, custom_vocabulary):
+        # custom_vocabulary = None
+        # custom_vocabulary = ["car"]
+        args = DeticArgs(custom_vocabulary)
         cfg = setup_cfg(args)
 
         cfg.defrost()

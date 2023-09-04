@@ -15,17 +15,21 @@ import cv2
 
 
 class OVDetectorNode(ImageNodeBase):
-    def __init__(self, **kwargs):
+    def __init__(self, suffix="", **kwargs):
         super().__init__(**kwargs)
         self.rgb_img = None
         self.depth_img = None
         self.bridge = CvBridge()
 
         self.tf_broadcaster = TransformBroadcaster(self)
-        self.image_publisher = self.create_publisher(Image, "/result", 1)
+        # self.image_publisher = self.create_publisher(Image, "/result", 1)
 
-        self.detector = DeticModule()
-        cv2.namedWindow("Test", cv2.WINDOW_NORMAL)
+        self.running = False
+        self.detector = None
+        self.detect_result = None
+
+        self.suffix = suffix
+        # cv2.namedWindow("Test"+self.suffix, cv2.WINDOW_NORMAL)
 
         self.timer = self.create_timer(0.05, self.timer_callback)
 
@@ -33,26 +37,40 @@ class OVDetectorNode(ImageNodeBase):
         self.logger.info("Initialization finish！")
         self.last_time = time.time()
 
+    def set_vocabulary(self, vocabulary):
+        self.running = False
+        del self.detector
+        self.detector = DeticModule(vocabulary)
+        self.running = True
+
     def timer_callback(self):
         if self.rgb_img is not None and self.depth_img is not None:
-            # Process
-            img = self.detector.process(self.rgb_img)
-            # Timer
-            current_time = time.time()
-            self.logger.info("FPS: {}".format(1/(current_time-self.last_time)))
-            self.last_time = current_time
-            # img = self.bridge.cv2_to_imgmsg(self.rgb_img, "bgr8")
-            # self.image_publisher.publish(img)
+            if self.running:
+                # Process
+                img = self.detector.process(self.rgb_img)
+                # Timer
+                current_time = time.time()
+                self.logger.info("FPS: {}".format(1/(current_time-self.last_time)))
+                self.last_time = current_time
+                self.detect_result = img
+                # img = self.bridge.cv2_to_imgmsg(self.rgb_img, "bgr8")
+                # self.image_publisher.publish(img)
 
-            # Visualization
-            cv2.imshow("Test", img)
-            cv2.waitKey(1)
+                # Visualization
+                # cv2.imshow("Test"+self.suffix, img)
+
+                # cv2.imwrite("result.jpg", img)
+
+                # cv2.waitKey(50)
 
 
 def main(args=None):
     rclpy.init(args=args)
 
     ov_detector_node = OVDetectorNode(node_name="ov_detector", rgb_enable=True, depth_enable=True)
+    # custom_vocabulary = None
+    custom_vocabulary = ["car"]
+    ov_detector_node.set_vocabulary(custom_vocabulary)
 
     rclpy.spin(ov_detector_node)
 
