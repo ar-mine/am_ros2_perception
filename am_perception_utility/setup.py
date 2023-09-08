@@ -20,6 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'capture_frame = am_perception_utility.CaptureFrame:main',
         ],
     },
 )
