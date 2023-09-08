@@ -40,13 +40,13 @@ class CaptureFrame(ImageNodeBase):
 def main(args=None):
     rclpy.init(args=args)
 
-    ov_detector_node = CaptureFrame(save_path="/home/armine/Pictures/RGBD",
-                                    node_name="ov_detector", rgb_enable=True, depth_enable=True)
+    frame_capture_node = CaptureFrame(save_path="/home/armine/Pictures/RGBD",
+                                      node_name="ov_detector", rgb_enable=True, depth_enable=True)
 
-    while ov_detector_node.frames > 0:
-        rclpy.spin_once(ov_detector_node)
+    while frame_capture_node.frames > 0:
+        rclpy.spin_once(frame_capture_node)
 
-    ov_detector_node.destroy_node()
+    frame_capture_node.destroy_node()
     rclpy.shutdown()
 
 
