@@ -4,3 +4,9 @@
 [submodule "am_OVD/am_OVD/modules/Detic"]
 	path = am_OVD/am_OVD/modules/Detic
 	url = https://github.com/facebookresearch/Detic.git
+[submodule "am_grasp/am_grasp/graspnet"]
+	path = am_grasp/am_grasp/graspnet
+	url = git@github.com:ar-mine/graspnet-baseline.git
+[submodule "am_grasp/am_grasp/graspnetAPI"]
+	path = am_grasp/am_grasp/graspnetAPI
+	url = https://github.com/graspnet/graspnetAPI.git
