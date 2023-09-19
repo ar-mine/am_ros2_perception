@@ -49,4 +49,5 @@ class DeticModule:
 
     def process(self, img):
         predictions, visualized_output = self.detector.run_on_image(img)
-        return visualized_output.get_image()[:, :, ::-1]
+        # print(predictions, visualized_output)
+        return predictions, visualized_output.get_image()[:, :, ::-1]

@@ -4,7 +4,10 @@ from std_msgs.msg import Int32
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import TransformStamped
 from cv_bridge import CvBridge, CvBridgeError
-from tf2_ros import TransformBroadcaster
+from tf2_ros.buffer import Buffer
+from tf2_ros.transform_listener import TransformListener
+from tf2_ros.static_transform_broadcaster import StaticTransformBroadcaster
+
 from rclpy.qos import qos_profile_sensor_data
 
 from am_OVD.modules import DeticModule
@@ -21,12 +24,15 @@ class OVDetectorNode(ImageNodeBase):
         self.depth_img = None
         self.bridge = CvBridge()
 
-        self.tf_broadcaster = TransformBroadcaster(self)
+        self.tf_static_broadcaster = StaticTransformBroadcaster(self)
+        self.tf_buffer = Buffer()
+        self.tf_listener = TransformListener(self.tf_buffer, self)
         # self.image_publisher = self.create_publisher(Image, "/result", 1)
 
         self.running = False
         self.detector = None
         self.detect_result = None
+        self.detect_dict = None
 
         self.suffix = suffix
         # cv2.namedWindow("Test"+self.suffix, cv2.WINDOW_NORMAL)
@@ -47,12 +53,13 @@ class OVDetectorNode(ImageNodeBase):
         if self.rgb_img is not None and self.depth_img is not None:
             if self.running:
                 # Process
-                img = self.detector.process(self.rgb_img)
+                pred, img = self.detector.process(self.rgb_img)
                 # Timer
                 current_time = time.time()
                 self.logger.info("FPS: {}".format(1/(current_time-self.last_time)))
                 self.last_time = current_time
                 self.detect_result = img
+                self.detect_dict = pred
                 # img = self.bridge.cv2_to_imgmsg(self.rgb_img, "bgr8")
                 # self.image_publisher.publish(img)
 
