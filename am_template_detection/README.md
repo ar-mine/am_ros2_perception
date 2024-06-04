@@ -11,6 +11,7 @@ A package including template-based detection algorithm.
 - [ ] Download script
 - [ ] Optimize module description
 - [ ] Open/Close rotation bbox
+- [ ] Update requirement
 
 # Deep Template-based Object Instance Detection
 
