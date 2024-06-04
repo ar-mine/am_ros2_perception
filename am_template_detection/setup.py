@@ -1,11 +1,14 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 package_name = 'am_template_detection'
 
 setup(
     name=package_name,
-    version='1.0.0',
-    packages=[package_name],
+    version='1.1',
+    packages=find_packages(package_name),
+    package_dir={
+        "models": f"./{package_name}/models"
+    },
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),

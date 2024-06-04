@@ -4,9 +4,13 @@ A package including template-based detection algorithm.
 ## ChangeLog
 ### V1.0.0
 + Move detector belonging to `franka_perception` here (Restructure).
-
-## Functionality
-+ TODO
+### V1.1
++ Modify setup.py to make ROS2-free installation.
++ Add a jupyter example for easy start.
+## TODO List
+- [ ] Download script
+- [ ] Optimize module description
+- [ ] Open/Close rotation bbox
 
 # Deep Template-based Object Instance Detection
 

@@ -28,10 +28,9 @@ class ObjDetectorNode(ImageNodeBase):
         self.depth_img = None
 
         self.bridge = CvBridge()
-        self.image_publisher = self.create_publisher(Image, "/test_out", 1)
-        self.flag_publisher = self.create_publisher(Int32, "/flag", 3)
-        self.step_subscription = self.create_subscription(Int32, "/step_", self.step_callback, 3)
-
+        self.image_publisher = self.create_publisher(Image, "/template_detector/test_out", 1)
+        self.flag_publisher = self.create_publisher(Int32, "/template_detector/flag", 1)
+        self.step_subscription = self.create_subscription(Int32, "/template_detector/step_", self.step_callback, 3)
         self.tf_broadcaster = TransformBroadcaster(self)
 
         self.timer = self.create_timer(0.05, self.timer_callback)
@@ -53,7 +52,8 @@ class ObjDetectorNode(ImageNodeBase):
                 if success:
                     depth_array = self.depth_img[bbox[1]:bbox[3], bbox[0]:bbox[2]]
                     # avg_depth = np.average(depth_array)/1000.0
-                    avg_depth = 0.52
+                    # print(avg_depth)
+                    avg_depth = 0.36
 
                     bbox_center = [(bbox[0] + bbox[2]) // 2, (bbox[1] + bbox[3]) // 2]
                     u_v_1 = np.array([bbox_center[0], bbox_center[1], 1]).T

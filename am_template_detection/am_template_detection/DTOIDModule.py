@@ -8,10 +8,10 @@ import pandas
 import numpy
 import cv2
 from math import atan2, atan
-
-from am_template_detection.models.siamesenet import SiameseNetwork
 from torchvision import transforms
+
 import torch.nn.functional as F
+from .models.siamesenet import SiameseNetwork
 
 
 class DTOIDModule:
@@ -277,18 +277,19 @@ class DTOIDModule:
 
                 wh = 0
 
+                best_contour = None
                 for contour in contours:
 
                     approx = cv2.approxPolyDP(
                         contour, 0.01 * cv2.arcLength(contour, True), True)
 
                     x, y, w, h = cv2.boundingRect(contour)
-                    if w < 10 or h < 10 or w > 300 or h > 300:
-                        continue
                     if w * h > wh:
                         wh = w * h
                         best_contour = contour
 
+                if best_contour is None:
+                    continue
                 rect = cv2.minAreaRect(best_contour)
                 box = cv2.boxPoints(rect)
                 box = np.int0(box)
@@ -316,15 +317,3 @@ class DTOIDModule:
 def sigmoid(x):
     s = 1 / (1 + np.exp(-x))
     return s
-
-
-if __name__ == "__main__":
-    image_path = "/home/armine/Downloads/TUIDS_V2/TUIDS/test_imgs"
-    template_path = "/home/armine/Downloads/TUIDS_V2/TUIDS/templates/duck_reverse"
-    runner = DTOIDModule(template_dir=template_path)
-    img_list = os.listdir(image_path)
-    for img_name in img_list:
-        img = cv2.imread(os.path.join(image_path, img_name))
-        success, img_numpy, bbox, angel = runner.process(img, threshold=0.5)
-        cv2.imshow("show", img_numpy)
-        cv2.waitKey(0)
