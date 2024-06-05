@@ -2,8 +2,9 @@ import rclpy
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 import numpy as np
-from sensor_msgs.msg import Image, CameraInfo
+from sensor_msgs.msg import Image, CameraInfo, CompressedImage
 from cv_bridge import CvBridge, CvBridgeError
+import cv2
 
 
 class ImageNodeBase(Node):
@@ -14,6 +15,8 @@ class ImageNodeBase(Node):
             rgb_topic_name
         depth_enable
             depth_topic_name
+        compressed
+            true or false
     """
     def __init__(self, **kwargs):
         # Create ROS2 node
@@ -23,6 +26,12 @@ class ImageNodeBase(Node):
             self.node_name = kwargs['node_name']
         super().__init__(self.node_name)
 
+        # Check whether using compression
+        if 'compressed' not in kwargs.keys():
+            self.compressed = False
+        else:
+            self.compressed = kwargs['compressed']
+
         # Create RGB subscription
         if 'rgb_enable' in kwargs.keys() and kwargs['rgb_enable'] is not False:
             self.rgb_enable = True
@@ -30,7 +39,10 @@ class ImageNodeBase(Node):
                 self.rgb_topic_name = "/camera/color/image_raw"
             else:
                 self.rgb_topic_name = kwargs['rgb_topic_name']
-            self.rgb_subscription = self.create_subscription(Image, self.rgb_topic_name, self.rgb_callback, 3)
+            if not self.compressed:
+                self.rgb_subscription = self.create_subscription(Image, self.rgb_topic_name, self.rgb_callback, 3)
+            else:
+                self.rgb_subscription = self.create_subscription(CompressedImage, self.rgb_topic_name, self.rgb_callback, 3)
 
             self.rgb_img = None
             self.rgb_flag = False
@@ -45,6 +57,11 @@ class ImageNodeBase(Node):
             else:
                 self.depth_topic_name = kwargs['depth_topic_name']
             self.depth_subscription = self.create_subscription(Image, self.depth_topic_name, self.depth_callback, 3)
+
+            # if not self.compressed:
+            #     self.depth_subscription = self.create_subscription(Image, self.depth_topic_name, self.depth_callback, 3)
+            # else:
+            #     self.depth_subscription = self.create_subscription(CompressedImage, self.depth_topic_name, self.depth_callback, 3)
 
             self.depth_img = None
             self.depth_flag = False
@@ -63,7 +80,10 @@ class ImageNodeBase(Node):
 
     def rgb_callback(self, rgb_msg):
         try:
-            cv_image = self.bridge.imgmsg_to_cv2(rgb_msg, "bgr8")
+            if not self.compressed:
+                cv_image = self.bridge.imgmsg_to_cv2(rgb_msg, "bgr8")
+            else:
+                cv_image = self.bridge.compressed_imgmsg_to_cv2(rgb_msg, "bgr8")
         except CvBridgeError as e:
             self.logger.error(e)
             return
@@ -73,6 +93,15 @@ class ImageNodeBase(Node):
     def depth_callback(self, depth_msg):
         try:
             cv_image = self.bridge.imgmsg_to_cv2(depth_msg, "passthrough")
+
+            # if not self.compressed:
+            #     cv_image = self.bridge.imgmsg_to_cv2(depth_msg, "passthrough")
+            # else:
+            #     depth_msg.data = depth_msg.data[12:]
+            #     buf = np.ndarray(shape=(1, len(depth_msg.data)),
+            #                      dtype=np.uint8, buffer=depth_msg.data)
+            #     cv_image = cv2.imdecode(buf, -1)
+            #     # cv_image = self.bridge.compressed_imgmsg_to_cv2(depth_msg, "bgr16")
         except CvBridgeError as e:
             self.logger.error(e)
             return

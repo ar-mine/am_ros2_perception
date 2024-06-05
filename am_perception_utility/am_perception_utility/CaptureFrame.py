@@ -41,7 +41,9 @@ def main(args=None):
     rclpy.init(args=args)
 
     frame_capture_node = CaptureFrame(save_path="/home/armine/Pictures/RGBD",
-                                      node_name="ov_detector", rgb_enable=True, depth_enable=True)
+                                      node_name="frame_capture", rgb_enable=True, depth_enable=True, compressed=True,
+                                      rgb_topic_name="/camera/color/image_raw/compressed",
+                                      depth_topic_name="/camera/aligned_depth_to_color/image_raw")
 
     while frame_capture_node.frames > 0:
         rclpy.spin_once(frame_capture_node)
