@@ -10,4 +10,7 @@ Follow `graspnet` to install graspnet and graspnetAPI.
 ### V1.0.0
 + Evaluate and encapsule the graspnet functionalities.
 
+### V1.1.0
++ GraspPoseDetector Finish.
+
 ## TODO 
